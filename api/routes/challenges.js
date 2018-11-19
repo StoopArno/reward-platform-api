@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-const Reward = require('../models/reward')
+const Challenge = require('../models/challenge');
 
 router.get('/',  (req, res, next) => {
-    Reward.find()
+    Challenge.find()
         .exec()
         .then(docs => {
             console.log(docs);
@@ -20,26 +20,25 @@ router.get('/',  (req, res, next) => {
 });
 
 router.post('/',  (req, res, next) => {
-    const reward = new Reward({
+    const challenge = new Challenge({
         _id: new mongoose.Types.ObjectId(),
         points: req.body.points,
-        descriptionShort: req.body.descriptionShort,
-        descriptionLong: req.body.descriptionLong
-    });    
-    reward.save()
+        title: req.body.title
+    });  
+    challenge.save()
         .then(result => {
             res.status(201).send({
-                msg: 'Created reward',
-                reward: result
+                msg: 'Created challenge',
+                challenge: result
             });
         })
         .catch(err => {
             res.status(500).json({ error: err });
-        });    
+        });  
 });
 
-router.get('/:rewardId',  (req, res, next) => {
-    Reward.findById(req.params.rewardId)
+router.get('/:challengeId',  (req, res, next) => {
+    Challenge.findById(req.params.challengeId)
         .exec()
         .then(doc => {
             console.log(doc);
@@ -53,19 +52,17 @@ router.get('/:rewardId',  (req, res, next) => {
             console.log(err);
             res.status(500).json({error: err});
         })
-    });
+});
 
-router.delete('/:rewardId',  (req, res, next) => {
+router.delete('/:challengeId',  (req, res, next) => {
     res.status(200).json({
-        msg : 'Deleted reward!',
-        id : req.params.rewardId
+        msg : 'Deleted challenge!'
     });
 });
 
-router.patch('/:rewardId',  (req, res, next) => {
+router.patch('/:challengeId',  (req, res, next) => {
     res.status(200).json({
-        msg : 'Updated reward',        
-        id : req.params.rewardId
+        msg : 'Updated challenge'
     });
 });
 

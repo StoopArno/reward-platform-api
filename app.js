@@ -7,20 +7,14 @@ const router = express.Router();
 const cors = require('cors');
 
 const rewardRoutes = require('./api/routes/rewards');
-const actionRoutes = require('./api/routes/actions');
+const challengeRoutes = require('./api/routes/challenges');
 
 app.use(morgan('dev'));     // Log all requests
 app.use(cors())             // Enable CORS on all requests
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb://localhost:27017/reward-platform', 
-            // process.env.ADDRESS + 
-            // ':' + process.env.PORT + 
-            // '/' +  process.env.DB_NAME,
-            { useNewUrlParser: true });
-
-
+mongoose.connect('mongodb://localhost:27017/reward-platform', { useNewUrlParser: true });
 
 // Routes
 router.get('/',  (req, res, next) => {
@@ -29,7 +23,7 @@ router.get('/',  (req, res, next) => {
     });
 });
 app.use('/rewards', rewardRoutes);
-app.use('/actions', actionRoutes);
+app.use('/challenges', challengeRoutes);
 
 app.use((req, res, next) => {
     const err = new Error('Not Found');

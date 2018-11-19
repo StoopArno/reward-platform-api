@@ -1,7 +1,8 @@
 {
-    "env": {
-        "ADDRESS": "localhost",
-        "PORT": "27017",
-        "DB_NAME": "Reward-platform"
+    "env": {        
+        "DB_PORT": "27017",
+        "DB_ADDRESS": "localhost",
+        "DB_NAME": "reward-platform",
+        "PORT": "3000" 
     }
 }

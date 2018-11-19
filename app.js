@@ -14,7 +14,8 @@ app.use(cors())             // Enable CORS on all requests
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb://localhost:27017/reward-platform', { useNewUrlParser: true });
+mongoose.connect(`mongodb://${process.env.DB_ADDRESS}:${process.env.DB_PORT}/${process.env.DB_NAME}`, { useNewUrlParser: true })
+// mongoose.connect('mongodb://' +  + ':' + process.env.DB_PORT + '/' + process.env.DB_NAME);
 
 // Routes
 router.get('/',  (req, res, next) => {

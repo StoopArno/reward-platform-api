@@ -1,0 +1,7 @@
+{
+    "env": {
+        "ADDRESS": "localhost",
+        "PORT": "27017",
+        "DB_NAME": "Reward-platform"
+    }
+}

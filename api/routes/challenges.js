@@ -55,16 +55,33 @@ router.get('/:challengeId',  (req, res, next) => {
 });
 
 router.delete('/:challengeId',  (req, res, next) => {
-    res.status(200).json({
-        msg : 'Deleted challenge!'
-    });
+    Challenge.deleteOne({_id: req.params.challengeId})
+        .exec()
+        .then(result => {
+            res.status(200).json(result);
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({error: err});
+        })
 });
 
 router.patch('/:challengeId',  (req, res, next) => {
-    res.status(200).json({
-        msg : 'Updated challenge'
-    });
+    const id = req.params.challengeId;
+    const updateOps = {};
+    for (const ops of req.body){
+        updateOps[ops.propName] = ops.value;
+    }
+    Challenge.update({ _id: id}, { $set: updateOps})
+        .exec()
+        .then(result => {
+            console.log(result);
+            res.status(200).json(result);
+        })
+        .catch(err =>{
+            console.log(err);
+            res.status(500).json({error: err});
+        })
 });
-
 
 module.exports = router;

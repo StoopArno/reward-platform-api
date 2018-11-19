@@ -56,18 +56,33 @@ router.get('/:rewardId',  (req, res, next) => {
     });
 
 router.delete('/:rewardId',  (req, res, next) => {
-    res.status(200).json({
-        msg : 'Deleted reward!',
-        id : req.params.rewardId
-    });
+    Reward.deleteOne({_id: req.params.rewardId})
+        .exec()
+        .then(result => {
+            res.status(200).json(result);
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({error: err});
+        })
 });
 
 router.patch('/:rewardId',  (req, res, next) => {
-    res.status(200).json({
-        msg : 'Updated reward',        
-        id : req.params.rewardId
-    });
+    const id = req.params.rewardId;
+    const updateOps = {};
+    for (const ops of req.body){
+        updateOps[ops.propName] = ops.value;
+    }
+    Reward.update({ _id: id}, { $set: updateOps})
+        .exec()
+        .then(result => {
+            console.log(result);
+            res.status(200).json(result);
+        })
+        .catch(err =>{
+            console.log(err);
+            res.status(500).json({error: err});
+        })
 });
-
 
 module.exports = router;

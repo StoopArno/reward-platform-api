@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 
-const rewardRequestSchema = mongoose.Schema({
+const rewardClaimSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
+    date: Date,
+    received: { type: Boolean, default: false },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
@@ -12,4 +14,4 @@ const rewardRequestSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('RewardRequestSchema', rewardRequestSchema);
+module.exports = mongoose.model('RewardClaim', rewardClaimSchema);

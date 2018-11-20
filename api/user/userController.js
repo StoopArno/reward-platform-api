@@ -1,5 +1,30 @@
 const mongoose = require('mongoose');
 const User = require('./userModel');
+const jwt = require('jsonwebtoken');
+
+exports.authenticate = function(req, res){
+    User.findOne({name: req.body.name}, function(err, user){
+        if(err){
+            res.status(500).json({ error: err });
+        } else{
+            if(user){
+                if(req.body.name === user.password){
+                    const token = jwt.sign({
+                        _id:user._id,
+                        name: user['name'],
+                        isAdmin:user['isAdmin']
+                    }, process.env.JWT_KEY);
+
+                    return res.status(200).json({
+                        success:true,
+                        token: token
+                    });
+                } 
+            }
+            res.status(404).json({success:false});
+        }
+    });
+};
 
 exports.findAll = function(req, res){
     User.find()
@@ -19,8 +44,9 @@ exports.findAll = function(req, res){
 exports.insert = function(req, res){
     const user = new User({
         _id: new mongoose.Types.ObjectId(),
-        points: req.body.points,
-        title: req.body.title
+        name: req.body.name,
+        password: req.body.password,
+        isAdmin: req.body.isAdmin
     });  
     user.save()
         .then(result => {
@@ -51,7 +77,7 @@ exports.find = function(req, res){
         })
 }
 
-exports.destroy = function(req, res){
+exports.delete = function(req, res){
     User.deleteOne({_id: req.params.userId})
         .exec()
         .then(result => {

@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const controller = require('./userController');
 
+router.post('/auth', (req, res, next) => {
+    controller.authenticate(req, res);
+});
+
 router.get('/',  (req, res, next) => {
     controller.findAll(req, res);
 });
@@ -15,7 +19,7 @@ router.get('/:userId',  (req, res, next) => {
 });
 
 router.delete('/:userId',  (req, res, next) => {
-    controller.destroy(req, res);
+    controller.delete(req, res);
 });
 
 router.patch('/:userId',  (req, res, next) => {

@@ -3,14 +3,10 @@ This nodeJS api is based on the project located at the following [git repo](http
 
 ## Setup info
 Clone the repo and use the following command in a terminal which start a local nodeJS server:
-Keep in mind that if you make any changes you will have to restart the server.
 ```
-node server.js
+npm start
 ```
-If you don't want to keep restarting the base nodeJs server over and over again you can use the following command:
-```
-nodemon server.js
-```
+This refers to the script defined in package.json, which runs nodemon on 'server.js'. It's very important to use 'npm start' otherwise the nodemon configuration won't work.
 ## Configuration info
 The port of the nodeJS api can be configured using nodemon.json where you can find it under "PORT". There are a couple other environment variables there wich are used to connect to the mongoDB that is used in the api.
 ```
@@ -24,8 +20,11 @@ The port of the nodeJS api can be configured using nodemon.json where you can fi
 
 ## API information
 There are a number of resources that can be queried at this time. These resources are:
-* rewards
+* achievements
 * challenges
+* challengeRequests
+* rewards
+* users
 
 A basic getAll can be performed by a simple GET request on the base resource:
 ```

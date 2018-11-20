@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const Challenge = require('./challengeModel');
+const ChallengeRequest = require('./challengeRequestModel');
 
 exports.findAll = function(req, res){
-    Challenge.find()
+    ChallengeRequest.find()
         .exec()
         .then(docs => {
             console.log(docs);
@@ -18,17 +18,20 @@ exports.findAll = function(req, res){
 
 exports.insert = function(req, res){
     console.log(req.body.user);
-    const challenge = new Challenge({
+    const challengeRequest = new ChallengeRequest({
         _id: new mongoose.Types.ObjectId(),
-        points: req.body.points,
-        title: req.body.title,
-        user: req.body.user_id
+        date: req.body.date,
+        isAccepted: req.body.isAccepted,
+        motivation: req.body.motivation,
+        user: req.body.user_id,
+        challenge: req.body.challlenge_id,
+
     });  
-    challenge.save()
+    challengeRequest.save()
         .then(result => {
             res.status(201).send({
-                msg: 'Created challenge',
-                challenge: result
+                msg: 'Created challengeRequest',
+                challengeRequest: result
             });
         })
         .catch(err => {
@@ -37,7 +40,7 @@ exports.insert = function(req, res){
 }
 
 exports.find = function(req, res){
-    Challenge.findById(req.params.challengeId)
+    ChallengeRequest.findById(req.params.challengeRequestId)
         .exec()
         .then(doc => {
             console.log(doc);
@@ -54,7 +57,7 @@ exports.find = function(req, res){
 }
 
 exports.delete = function(req, res){
-    Challenge.deleteOne({_id: req.params.challengeId})
+    ChallengeRequest.deleteOne({_id: req.params.challengeRequestId})
         .exec()
         .then(result => {
             res.status(200).json(result);
@@ -66,12 +69,12 @@ exports.delete = function(req, res){
 }
 
 exports.update = function(req, res){
-    const id = req.params.challengeId;
+    const id = req.params.challengeRequestId;
     const updateOps = {};
     for (const ops of req.body){
         updateOps[ops.propName] = ops.value;
     }
-    Challenge.update({ _id: id}, { $set: updateOps})
+    ChallengeRequest.update({ _id: id}, { $set: updateOps})
         .exec()
         .then(result => {
             console.log(result);

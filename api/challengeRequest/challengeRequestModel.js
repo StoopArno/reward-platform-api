@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const challengeSchema = mongoose.Schema({
+const challengeRequestSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     date: Date,
     isAccepted: Boolean,
@@ -15,4 +15,4 @@ const challengeSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Challenge', challengeSchema);
+module.exports = mongoose.model('ChallengeRequest', challengeRequestSchema);

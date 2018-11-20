@@ -6,8 +6,8 @@ const mongoose = require('mongoose');
 const router = express.Router();
 const cors = require('cors');
 
-const rewardRoutes = require('./api/routes/rewards');
-const challengeRoutes = require('./api/routes/challenges');
+const rewardRoutes = require('./api/reward/rewardRouter');
+const challengeRoutes = require('./api/challenge/challengeRouter');
 
 app.use(morgan('dev'));     // Log all requests
 app.use(cors())             // Enable CORS on all requests
@@ -15,14 +15,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 mongoose.connect(`mongodb://${process.env.DB_ADDRESS}:${process.env.DB_PORT}/${process.env.DB_NAME}`, { useNewUrlParser: true })
-// mongoose.connect('mongodb://' +  + ':' + process.env.DB_PORT + '/' + process.env.DB_NAME);
 
 // Routes
-router.get('/',  (req, res, next) => {
-    res.status(200).json({
-        msg : 'It Works!'
-    });
-});
 app.use('/rewards', rewardRoutes);
 app.use('/challenges', challengeRoutes);
 

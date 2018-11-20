@@ -23,7 +23,7 @@ The port of the nodeJS api can be configured using nodemon.json where you can fi
 ```
 
 ## API information
-There are a number of resources that can be queried at this time these resources are:
+There are a number of resources that can be queried at this time. These resources are:
 * rewards
 * challenges
 

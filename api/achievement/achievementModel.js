@@ -5,7 +5,7 @@ const achievementSchema = mongoose.Schema({
     title: String,
     description: String,
     points: Number,
-    isAvailable: Boolean,
+    isAvailable: { type: Boolean, default: true},
     achievementType: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'AchievemntType'

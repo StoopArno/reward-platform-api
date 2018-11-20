@@ -25,6 +25,8 @@ There are a number of resources that can be queried at this time. These resource
 * challenges
 * challengeRequests
 * rewards
+* rewardClaims
+* userAchievements
 * users
 
 A basic getAll can be performed by a simple GET request on the base resource:

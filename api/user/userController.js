@@ -8,7 +8,7 @@ exports.authenticate = function(req, res){
             res.status(500).json({ error: err });
         } else{
             if(user){
-                if(req.body.name === user.password){
+                if(req.body.password === user.password){
                     const token = jwt.sign({
                         _id:user._id,
                         name: user['name'],

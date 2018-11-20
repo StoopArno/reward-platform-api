@@ -4,20 +4,21 @@ const ChallengeRequest = require('./challengeRequestModel');
 exports.findAll = function(req, res){
     ChallengeRequest.find()
         .exec()
-        .then(docs => {
-            console.log(docs);
-            res.status(200).json(docs);
+        .then(result => {
+            res.status(200).json({
+                success: true,
+                challengeRequests: result
+            });
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err
+            res.status(500).json({ 
+                success: false,
+                error: err 
             });
         });
 };
 
 exports.insert = function(req, res){
-    console.log(req.body.user);
     const challengeRequest = new ChallengeRequest({
         _id: new mongoose.Types.ObjectId(),
         date: req.body.date,
@@ -25,34 +26,43 @@ exports.insert = function(req, res){
         motivation: req.body.motivation,
         user: req.body.user_id,
         challenge: req.body.challlenge_id,
-
     });  
     challengeRequest.save()
         .then(result => {
             res.status(201).send({
-                msg: 'Created challengeRequest',
+                success: true,
                 challengeRequest: result
             });
         })
         .catch(err => {
-            res.status(500).json({ error: err });
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
         });  
 }
 
 exports.find = function(req, res){
     ChallengeRequest.findById(req.params.challengeRequestId)
         .exec()
-        .then(doc => {
-            console.log(doc);
-            if(doc){
-                res.status(200).json(doc);
+        .then(result => {
+            if(result){
+                res.status(201).send({
+                    success: true,
+                    challenge: result
+                });
             } else{
-                res.status(404).json({error: "No entry found for given ID"});
-            }            
+                res.status(404).send({
+                    success: false,
+                    error: "No results"
+                });
+            }             
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({error: err});
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
         })
 }
 
@@ -60,11 +70,16 @@ exports.delete = function(req, res){
     ChallengeRequest.deleteOne({_id: req.params.challengeRequestId})
         .exec()
         .then(result => {
-            res.status(200).json(result);
+            res.status(200).json({
+                success: true,
+                result: result
+            });
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({error: err});
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
         })
 }
 
@@ -77,12 +92,16 @@ exports.update = function(req, res){
     ChallengeRequest.update({ _id: id}, { $set: updateOps})
         .exec()
         .then(result => {
-            console.log(result);
-            res.status(200).json(result);
+            res.status(200).json({
+                success: true,
+                result: result
+            });
         })
         .catch(err =>{
-            console.log(err);
-            res.status(500).json({error: err});
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
         })
 };
 

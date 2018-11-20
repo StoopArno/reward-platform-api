@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const challengeRequestSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     date: Date,
-    isAccepted: Boolean,
+    isAccepted: { type: Boolean, default: false },
     motivation: String,
     user: {
         type: mongoose.Schema.Types.ObjectId,

@@ -10,6 +10,7 @@ const challengeRoutes = require('./api/challenge/challengeRouter');
 const achievementRoutes = require('./api/achievement/achievementRouter');
 const achievementTypeRoutes = require('./api/achievementType/achievementTypeRouter')
 const challengeRequestRoutes = require ('./api/challengeRequest/challengeRequestRouter')
+const userAchievementRoutes = require ('./api/userAchievement/userAchievementRouter');
 const userRoutes = require('./api/user/userRouter');
 
 app.use(morgan('dev'));     // Log all requests
@@ -25,6 +26,7 @@ app.use('/challenges', challengeRoutes);
 app.use('/achievements', achievementRoutes);
 app.use('/achievementTypes', achievementTypeRoutes);
 app.use('/challengeRequests', challengeRequestRoutes);
+app.use('/userAchievements', userAchievementRoutes);
 app.use('/users', userRoutes);
 
 app.use((req, res, next) => {

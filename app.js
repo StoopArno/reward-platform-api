@@ -8,6 +8,8 @@ const cors = require('cors');
 
 const rewardRoutes = require('./api/reward/rewardRouter');
 const challengeRoutes = require('./api/challenge/challengeRouter');
+const achievementRoutes = require('./api/achievement/achievementRouter');
+const userRoutes = require('./api/user/userRouter');
 
 app.use(morgan('dev'));     // Log all requests
 app.use(cors())             // Enable CORS on all requests
@@ -19,6 +21,8 @@ mongoose.connect(`mongodb://${process.env.DB_ADDRESS}:${process.env.DB_PORT}/${p
 // Routes
 app.use('/rewards', rewardRoutes);
 app.use('/challenges', challengeRoutes);
+app.use('/achievements', achievementRoutes);
+app.use('/users', userRoutes);
 
 app.use((req, res, next) => {
     const err = new Error('Not Found');

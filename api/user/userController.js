@@ -1,11 +1,8 @@
-const express = require('express');
-const router = express.Router();
 const mongoose = require('mongoose');
+const User = require('./userModel');
 
-const Reward = require('../models/reward')
-
-router.get('/',  (req, res, next) => {
-    Reward.find()
+exports.findAll = function(req, res){
+    User.find()
         .exec()
         .then(docs => {
             console.log(docs);
@@ -17,29 +14,28 @@ router.get('/',  (req, res, next) => {
                 error: err
             });
         });
-});
+};
 
-router.post('/',  (req, res, next) => {
-    const reward = new Reward({
+exports.insert = function(req, res){
+    const user = new User({
         _id: new mongoose.Types.ObjectId(),
         points: req.body.points,
-        descriptionShort: req.body.descriptionShort,
-        descriptionLong: req.body.descriptionLong
-    });    
-    reward.save()
+        title: req.body.title
+    });  
+    user.save()
         .then(result => {
             res.status(201).send({
-                msg: 'Created reward',
-                reward: result
+                msg: 'Created user',
+                user: result
             });
         })
         .catch(err => {
             res.status(500).json({ error: err });
-        });    
-});
+        });  
+}
 
-router.get('/:rewardId',  (req, res, next) => {
-    Reward.findById(req.params.rewardId)
+exports.find = function(req, res){
+    User.findById(req.params.userId)
         .exec()
         .then(doc => {
             console.log(doc);
@@ -53,10 +49,10 @@ router.get('/:rewardId',  (req, res, next) => {
             console.log(err);
             res.status(500).json({error: err});
         })
-    });
+}
 
-router.delete('/:rewardId',  (req, res, next) => {
-    Reward.deleteOne({_id: req.params.rewardId})
+exports.destroy = function(req, res){
+    User.deleteOne({_id: req.params.userId})
         .exec()
         .then(result => {
             res.status(200).json(result);
@@ -65,15 +61,15 @@ router.delete('/:rewardId',  (req, res, next) => {
             console.log(err);
             res.status(500).json({error: err});
         })
-});
+}
 
-router.patch('/:rewardId',  (req, res, next) => {
-    const id = req.params.rewardId;
+exports.update = function(req, res){
+    const id = req.params.userId;
     const updateOps = {};
     for (const ops of req.body){
         updateOps[ops.propName] = ops.value;
     }
-    Reward.update({ _id: id}, { $set: updateOps})
+    User.update({ _id: id}, { $set: updateOps})
         .exec()
         .then(result => {
             console.log(result);
@@ -83,6 +79,6 @@ router.patch('/:rewardId',  (req, res, next) => {
             console.log(err);
             res.status(500).json({error: err});
         })
-});
+};
 
-module.exports = router;
+var exports = module.exports;

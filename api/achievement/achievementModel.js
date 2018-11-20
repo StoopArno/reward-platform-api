@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 
-const challengeSchema = mongoose.Schema({
+const achievementSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    points: Number,
+    counter: Number,
+    description: String,
     title: String,
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -10,4 +11,4 @@ const challengeSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Challenge', challengeSchema);
+module.exports = mongoose.model('achievement', achievementSchema);

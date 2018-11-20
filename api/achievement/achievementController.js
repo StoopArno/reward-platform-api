@@ -1,44 +1,43 @@
-const express = require('express');
-const router = express.Router();
 const mongoose = require('mongoose');
+const Achievement = require('./achievementModel')
 
-const Challenge = require('../models/challenge');
-
-router.get('/',  (req, res, next) => {
-    Challenge.find()
-        .exec()
-        .then(docs => {
-            console.log(docs);
-            res.status(200).json(docs);
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err
-            });
+exports.findAll = function(req, res){
+    Achievement.find()
+    .exec()
+    .then(docs => {
+        console.log(docs);
+        res.status(200).json(docs);
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
         });
-});
+    });
+};
 
-router.post('/',  (req, res, next) => {
-    const challenge = new Challenge({
+exports.insert = function(req, res){
+    const achievement = new Achievement({
         _id: new mongoose.Types.ObjectId(),
-        points: req.body.points,
-        title: req.body.title
-    });  
-    challenge.save()
+        counter: req.body.counter,
+        description: req.body.description,
+        title: req.body.title,
+        userId: req.body.userId
+    });    
+    achievement.save()
         .then(result => {
             res.status(201).send({
-                msg: 'Created challenge',
-                challenge: result
+                msg: 'Created achievement',
+                achievement: result
             });
         })
         .catch(err => {
             res.status(500).json({ error: err });
-        });  
-});
+        });   
+};
 
-router.get('/:challengeId',  (req, res, next) => {
-    Challenge.findById(req.params.challengeId)
+exports.find = function(req, res){
+    Achievement.findById(req.params.achievementId)
         .exec()
         .then(doc => {
             console.log(doc);
@@ -52,10 +51,10 @@ router.get('/:challengeId',  (req, res, next) => {
             console.log(err);
             res.status(500).json({error: err});
         })
-});
+};
 
-router.delete('/:challengeId',  (req, res, next) => {
-    Challenge.deleteOne({_id: req.params.challengeId})
+exports.delete = function(req, res){
+    Achievement.deleteOne({_id: req.params.achievementId})
         .exec()
         .then(result => {
             res.status(200).json(result);
@@ -64,15 +63,15 @@ router.delete('/:challengeId',  (req, res, next) => {
             console.log(err);
             res.status(500).json({error: err});
         })
-});
+};
 
-router.patch('/:challengeId',  (req, res, next) => {
-    const id = req.params.challengeId;
+exports.update = function(req, res){
+    const id = req.params.achievementId;
     const updateOps = {};
     for (const ops of req.body){
         updateOps[ops.propName] = ops.value;
     }
-    Challenge.update({ _id: id}, { $set: updateOps})
+    Achievement.update({ _id: id}, { $set: updateOps})
         .exec()
         .then(result => {
             console.log(result);
@@ -82,6 +81,6 @@ router.patch('/:challengeId',  (req, res, next) => {
             console.log(err);
             res.status(500).json({error: err});
         })
-});
+};
 
-module.exports = router;
+var exports = module.exports;

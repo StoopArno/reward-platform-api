@@ -17,10 +17,12 @@ exports.findAll = function(req, res){
 };
 
 exports.insert = function(req, res){
+    console.log(req.body.user);
     const challenge = new Challenge({
         _id: new mongoose.Types.ObjectId(),
         points: req.body.points,
-        title: req.body.title
+        title: req.body.title,
+        user: req.body.user
     });  
     challenge.save()
         .then(result => {
@@ -51,7 +53,7 @@ exports.find = function(req, res){
         })
 }
 
-exports.destroy = function(req, res){
+exports.delete = function(req, res){
     Challenge.deleteOne({_id: req.params.challengeId})
         .exec()
         .then(result => {

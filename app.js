@@ -3,12 +3,12 @@ const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const router = express.Router();
 const cors = require('cors');
 
 const rewardRoutes = require('./api/reward/rewardRouter');
 const challengeRoutes = require('./api/challenge/challengeRouter');
 const achievementRoutes = require('./api/achievement/achievementRouter');
+const achievementTypeRoutes = require('./api/achievementType/achievementTypeRouter')
 const challengeRequestRoutes = require ('./api/challengeRequest/challengeRequestRouter')
 const userRoutes = require('./api/user/userRouter');
 
@@ -23,6 +23,7 @@ mongoose.connect(`mongodb://${process.env.DB_ADDRESS || "localhost"}:${process.e
 app.use('/rewards', rewardRoutes);
 app.use('/challenges', challengeRoutes);
 app.use('/achievements', achievementRoutes);
+app.use('/achievementTypes', achievementTypeRoutes);
 app.use('/challengeRequests', challengeRequestRoutes);
 app.use('/users', userRoutes);
 

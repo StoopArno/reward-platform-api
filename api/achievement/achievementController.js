@@ -3,53 +3,66 @@ const Achievement = require('./achievementModel')
 
 exports.findAll = function(req, res){
     Achievement.find()
-    .exec()
-    .then(docs => {
-        console.log(docs);
-        res.status(200).json(docs);
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            error: err
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                success: true,
+                achievements: result
+            });
+        })
+        .catch(err => {
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
         });
-    });
 };
 
 exports.insert = function(req, res){
     const achievement = new Achievement({
         _id: new mongoose.Types.ObjectId(),
-        counter: req.body.counter,
-        description: req.body.description,
         title: req.body.title,
-        userId: req.body.userId
+        description: req.body.description,
+        points: req.body.points,
+        isAvailable: req.body.isAvailable,
+        achievementType: req.body.achievementType_id
     });    
     achievement.save()
         .then(result => {
             res.status(201).send({
-                msg: 'Created achievement',
+                success: true,
                 achievement: result
             });
         })
         .catch(err => {
-            res.status(500).json({ error: err });
-        });   
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
+        });
 };
 
 exports.find = function(req, res){
     Achievement.findById(req.params.achievementId)
         .exec()
-        .then(doc => {
-            console.log(doc);
-            if(doc){
-                res.status(200).json(doc);
+        .then(result => {
+            if(result){
+                res.status(201).send({
+                    success: true,
+                    user: result
+                });
             } else{
-                res.status(404).json({error: "No entry found for given ID"});
+                res.status(404).send({
+                    success: false,
+                    error: "No results"
+                });
             }            
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({error: err});
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
         })
 };
 
@@ -57,11 +70,16 @@ exports.delete = function(req, res){
     Achievement.deleteOne({_id: req.params.achievementId})
         .exec()
         .then(result => {
-            res.status(200).json(result);
+            res.status(200).json({
+                success: true,
+                result: result
+            });
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({error: err});
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
         })
 };
 
@@ -74,12 +92,16 @@ exports.update = function(req, res){
     Achievement.update({ _id: id}, { $set: updateOps})
         .exec()
         .then(result => {
-            console.log(result);
-            res.status(200).json(result);
+            res.status(200).json({
+                success: true,
+                result: result
+            });
         })
         .catch(err =>{
-            console.log(err);
-            res.status(500).json({error: err});
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
         })
 };
 

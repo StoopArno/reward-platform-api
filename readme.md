@@ -21,6 +21,7 @@ The port of the nodeJS api can be configured using nodemon.json where you can fi
 ## API information
 There are a number of resources that can be queried at this time. These resources are:
 * achievements
+* achievementTypes
 * challenges
 * challengeRequests
 * rewards

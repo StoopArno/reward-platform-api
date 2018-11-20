@@ -2,13 +2,14 @@ const mongoose = require('mongoose');
 
 const achievementSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    counter: Number,
-    description: String,
     title: String,
-    user: {
+    description: String,
+    points: Number,
+    isAvailable: Boolean,
+    achievementType: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'AchievemntType'
     }
 });
 
-module.exports = mongoose.model('achievement', achievementSchema);
+module.exports = mongoose.model('Achievement', achievementSchema);

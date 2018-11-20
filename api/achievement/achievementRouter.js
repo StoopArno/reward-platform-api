@@ -15,7 +15,7 @@ router.get('/:achievementId',  (req, res, next) => {
 });
 
 router.delete('/:achievementId',  (req, res, next) => {
-    controller.destroy(req, res);
+    controller.delete(req, res);
 });
 
 router.patch('/:achievementId',  (req, res, next) => {

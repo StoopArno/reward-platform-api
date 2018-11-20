@@ -49,7 +49,7 @@ exports.find = function(req, res){
             if(result){
                 res.status(201).send({
                     success: true,
-                    user: result
+                    achievement: result
                 });
             } else{
                 res.status(404).send({

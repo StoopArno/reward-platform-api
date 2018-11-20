@@ -10,15 +10,15 @@ router.post('/',  (req, res, next) => {
     controller.insert(req, res);
 });
 
-router.get('/:challengeId',  (req, res, next) => {
+router.get('/:rewardId',  (req, res, next) => {
     controller.find(req, res);
 });
 
-router.delete('/:challengeId',  (req, res, next) => {
+router.delete('/:rewardId',  (req, res, next) => {
     controller.delete(req, res);
 });
 
-router.patch('/:challengeId',  (req, res, next) => {
+router.patch('/:rewardId',  (req, res, next) => {
     controller.update(req, res);
 });
 

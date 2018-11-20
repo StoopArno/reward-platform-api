@@ -4,14 +4,16 @@ const Reward = require('./rewardModel')
 exports.findAll = function(req, res){
     Reward.find()
     .exec()
-    .then(docs => {
-        console.log(docs);
-        res.status(200).json(docs);
+    .then(result => {
+        res.status(200).json({
+            success: true,
+            rewards: result
+        });
     })
     .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            error: err
+        res.status(500).json({ 
+            success: false,
+            error: err 
         });
     });
 };
@@ -19,36 +21,47 @@ exports.findAll = function(req, res){
 exports.insert = function(req, res){
     const reward = new Reward({
         _id: new mongoose.Types.ObjectId(),
+        title: req.body.title,
         points: req.body.points,
-        descriptionShort: req.body.descriptionShort,
-        descriptionLong: req.body.descriptionLong
+        limit: req.body.limit,
+        isAvailable: req.body.isAvailable
     });    
     reward.save()
         .then(result => {
             res.status(201).send({
-                msg: 'Created reward',
+                success: true,
                 reward: result
             });
         })
         .catch(err => {
-            res.status(500).json({ error: err });
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
         });   
 };
 
 exports.find = function(req, res){
     Reward.findById(req.params.rewardId)
         .exec()
-        .then(doc => {
-            console.log(doc);
-            if(doc){
-                res.status(200).json(doc);
+        .then(result => {
+            if(result){
+                res.status(201).send({
+                    success: true,
+                    reward: result
+                });
             } else{
-                res.status(404).json({error: "No entry found for given ID"});
+                res.status(404).send({
+                    success: false,
+                    error: "No results"
+                });
             }            
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({error: err});
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
         })
 };
 
@@ -56,11 +69,16 @@ exports.delete = function(req, res){
     Reward.deleteOne({_id: req.params.rewardId})
         .exec()
         .then(result => {
-            res.status(200).json(result);
+            res.status(200).json({
+                success: true,
+                result: result
+            });
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({error: err});
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
         })
 };
 
@@ -73,12 +91,16 @@ exports.update = function(req, res){
     Reward.update({ _id: id}, { $set: updateOps})
         .exec()
         .then(result => {
-            console.log(result);
-            res.status(200).json(result);
+            res.status(200).json({
+                success: true,
+                result: result
+            });
         })
         .catch(err =>{
-            console.log(err);
-            res.status(500).json({error: err});
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
         })
 };
 

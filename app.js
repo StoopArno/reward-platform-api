@@ -19,7 +19,7 @@ app.use(cors())             // Enable CORS on all requests
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGOLAB_URI.toString(), { useNewUrlParser: true });
+mongoose.connect(process.env.MONGOLAB_URI, { useNewUrlParser: true });
 
 // Routes
 app.use('/rewards', rewardRoutes);

@@ -25,7 +25,7 @@ exports.insert = function(req, res){
         isAccepted: req.body.isAccepted,
         motivation: req.body.motivation,
         user: req.body.user_id,
-        challenge: req.body.challlenge_id,
+        challenge: req.body.challenge_id,
     });  
     challengeRequest.save()
         .then(result => {

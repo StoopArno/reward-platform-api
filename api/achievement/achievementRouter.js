@@ -3,7 +3,6 @@ const router = express.Router();
 const controller = require('./achievementController');
 
 router.get('/',  (req, res, next) => {
-    console.log("test2");
     controller.findAll(req, res);
 });
 

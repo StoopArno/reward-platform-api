@@ -4,6 +4,7 @@
         "DB_PORT": "27017",
         "DB_ADDRESS": "localhost",
         "DB_NAME": "reward-platform",
+        "MONGOLAB_URI": "mongodb://example:example1@ds133496.mlab.com:33496/reward-platform",
         "PORT": "3000" 
     }
 }

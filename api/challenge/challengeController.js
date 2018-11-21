@@ -19,7 +19,6 @@ exports.findAll = function(req, res){
 };
 
 exports.insert = function(req, res){
-    console.log(req.body.user);
     const challenge = new Challenge({
         _id: new mongoose.Types.ObjectId(),
         title: req.body.title,

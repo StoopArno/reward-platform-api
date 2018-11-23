@@ -30,8 +30,17 @@ exports.filter = function(req, res){
 };
 
 exports.findAll = function(req, res){
-    ChallengeRequest.find()
-        .exec()
+    const promise = ChallengeRequest.find();
+    searchHelper.populateTables(promise);   
+    var populateTables;
+    if(req.query.populate){
+        populateTables = req.query.populate.split(',');
+        for(const table of populateTables){
+            promise.populate(table);
+        }
+    } 
+
+    promise.exec()
         .then(result => {
             res.status(200).json({
                 success: true,

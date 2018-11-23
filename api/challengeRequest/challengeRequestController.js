@@ -31,7 +31,7 @@ exports.filter = function(req, res){
 
 exports.findAll = function(req, res){
     const promise = ChallengeRequest.find();
-    searchHelper.populateTables(promise);   
+    // searchHelper.populateTables(promise);   
     var populateTables;
     if(req.query.populate){
         populateTables = req.query.populate.split(',');

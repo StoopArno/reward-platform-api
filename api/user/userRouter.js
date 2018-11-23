@@ -11,11 +11,11 @@ router.get('/search', (req, res, next) => {
     controller.filter(req, res);
 });
 
-router.get('/',  (req, res, next) => {
+router.get('/', (req, res, next) => {
     controller.findAll(req, res);
 });
 
-router.post('/',  (req, res, next) => {
+router.post('/', authMiddleware,  (req, res, next) => {
     controller.insert(req, res);
 });
 
@@ -27,7 +27,7 @@ router.delete('/:userId', authMiddleware,  (req, res, next) => {
     controller.delete(req, res);
 });
 
-router.patch('/:userId',  (req, res, next) => {
+router.patch('/:userId', authMiddleware,  (req, res, next) => {
     controller.update(req, res);
 });
 

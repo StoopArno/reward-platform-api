@@ -13,8 +13,9 @@ exports.filter = function(req, res){
         });
     }
 
-    AchievementType.find(searchParams)
-        .exec()
+    const promise = AchievementType.find(searchParams);
+    searchHelper.populateTables(req, promise);
+    promise.exec()
         .then(result => {
             res.status(200).json({
                 success: true,
@@ -30,8 +31,9 @@ exports.filter = function(req, res){
 }
 
 exports.findAll = function(req, res){
-    AchievementType.find()
-        .exec()
+    const promise = AchievementType.find();
+    searchHelper.populateTables(req, promise);
+    promise.exec()
         .then(result => {
             res.status(200).json({
                 success: true,
@@ -68,8 +70,9 @@ exports.insert = function(req, res){
 };
 
 exports.find = function(req, res){
-    AchievementType.findById(req.params.achievementTypeId)
-        .exec()
+    const promise = Achievement.findById(req.params.achievementTypeId);
+    searchHelper.populateTables(req, promise);
+    promise.exec()
         .then(result => {
             if(result){
                 res.status(201).send({

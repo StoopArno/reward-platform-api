@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('./rewardController');
+const authMiddleware = require ('../../middleware/auth/check-user');
 
 router.get('/search', (req, res, next) => {
     controller.filter(req, res);
@@ -10,7 +11,7 @@ router.get('/',  (req, res, next) => {
     controller.findAll(req, res);
 });
 
-router.post('/',  (req, res, next) => {
+router.post('/', authMiddleware, (req, res, next) => {
     controller.insert(req, res);
 });
 
@@ -18,11 +19,11 @@ router.get('/:rewardId',  (req, res, next) => {
     controller.find(req, res);
 });
 
-router.delete('/:rewardId',  (req, res, next) => {
+router.delete('/:rewardId', authMiddleware, (req, res, next) => {
     controller.delete(req, res);
 });
 
-router.patch('/:rewardId',  (req, res, next) => {
+router.patch('/:rewardId', authMiddleware, (req, res, next) => {
     controller.update(req, res);
 });
 

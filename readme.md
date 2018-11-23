@@ -99,4 +99,19 @@ The following is a list of operators tha can be used in the 'adv' property.
 * lte - lesser than or equal to
 * like
 
+### Joining collections/tables
+Sometimes instead of just the id referencing an entry in another table/collection you might need the whole object being referenced.
+This is done through the population of objects. This is possible on all GET endpoints of the resources that have any references to other tables:
+* rewardClaims
+* userAchievements
+* achievements
+* achievementTypes
+* challengeRequests
+Here you can see an example of a request that 'joins' two other collections:
+```
+GET /challengeRequests?populate=user,challenge
+```
+It is important that the names of the tables are only sepperated by 1 comma: , . Not a point or any other method of seperating the values.
+*Note this is alse possible in combination with the /search endpoints of the various resources.*
+
 ### Authentication

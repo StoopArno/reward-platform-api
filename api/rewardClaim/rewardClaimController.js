@@ -12,9 +12,10 @@ exports.filter = function(req, res){
             error: err 
         });
     }
-    
-    RewardClaim.find(searchParams)
-        .exec()
+
+    const promise = RewardClaim.find(searchParams);
+    searchHelper.populateTables(req, promise);
+    promise.exec()
         .then(result => {
             res.status(200).json({
                 success: true,
@@ -30,8 +31,9 @@ exports.filter = function(req, res){
 };
 
 exports.findAll = function(req, res){
-    RewardClaim.find()
-        .exec()
+    const promise = RewardClaim.find();
+    searchHelper.populateTables(req, promise);
+    promise.exec()
         .then(result => {
             res.status(200).json({
                 success: true,
@@ -70,8 +72,9 @@ exports.insert = function(req, res){
 };
 
 exports.find = function(req, res){
-    RewardClaim.findById(req.params.rewardClaimId)
-        .exec()
+    const promise = RewardClaim.findById(req.params.rewardClaimId);
+    searchHelper.populateTables(req, promise);
+    promise.exec()
         .then(result => {
             if(result){
                 res.status(201).send({

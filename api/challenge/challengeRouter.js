@@ -11,7 +11,7 @@ router.get('/',  (req, res, next) => {
     controller.findAll(req, res);
 });
 
-router.post('/', authMiddleware, (req, res, next) => {
+router.post('/', (req, res, next) => {
     controller.insert(req, res);
 });
 

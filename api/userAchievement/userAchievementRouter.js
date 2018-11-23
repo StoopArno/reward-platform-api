@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const controller = require('./userAchievementController');
 
+router.get('/search', (req, res, next) => {
+    controller.filter(req, res);
+});
+
 router.get('/',  (req, res, next) => {
     controller.findAll(req, res);
 });

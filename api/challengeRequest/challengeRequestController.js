@@ -1,5 +1,33 @@
 const mongoose = require('mongoose');
 const ChallengeRequest = require('./challengeRequestModel');
+const searchHelper = require('../../helper/searchHelper');
+
+exports.filter = function(req, res){
+    var searchParams;
+    try{        
+        searchParams = searchHelper.buildParams(req.body);
+    } catch {
+        res.status(500).json({ 
+            success: false,
+            error: err 
+        });
+    }
+
+    ChallengeRequest.find(searchParams)
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                success: true,
+                challengeRequests: result
+            });
+        })
+        .catch(err => {
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
+        });
+};
 
 exports.findAll = function(req, res){
     ChallengeRequest.find()
@@ -89,7 +117,7 @@ exports.update = function(req, res){
     for (const ops of req.body){
         updateOps[ops.propName] = ops.value;
     }
-    ChallengeRequest.update({ _id: id}, { $set: updateOps})
+    ChallengeRequest.update({ _id: id}, { $set: updateOps })
         .exec()
         .then(result => {
             res.status(200).json({

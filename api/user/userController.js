@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('./userModel');
 const jwt = require('jsonwebtoken');
+const searchHelper = require('../../helper/searchHelper');
 
 exports.authenticate = function(req, res){
     User.findOne({name: req.body.name}, function(err, user){
@@ -35,6 +36,33 @@ exports.authenticate = function(req, res){
             });
         }
     });
+};
+
+exports.filter = function(req, res){
+    var searchParams;
+    try{        
+        searchParams = searchHelper.buildParams(req.body);
+    } catch {
+        res.status(500).json({ 
+            success: false,
+            error: err 
+        });
+    }
+
+    User.find(searchParams)
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                success: true,
+                users: result
+            });
+        })
+        .catch(err => {
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
+        });
 };
 
 exports.findAll = function(req, res){

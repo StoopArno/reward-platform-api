@@ -6,6 +6,10 @@ router.post('/auth', (req, res, next) => {
     controller.authenticate(req, res);
 });
 
+router.get('/search', (req, res, next) => {
+    controller.filter(req, res);
+});
+
 router.get('/',  (req, res, next) => {
     controller.findAll(req, res);
 });

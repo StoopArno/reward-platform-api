@@ -1,5 +1,33 @@
 const mongoose = require('mongoose');
-const Achievement = require('./achievementModel')
+const Achievement = require('./achievementModel');
+const searchHelper = require('../../helper/searchHelper');
+
+exports.filter = function(req, res){
+    var searchParams;
+    try{        
+        searchParams = searchHelper.buildParams(req.body);
+    } catch {
+        res.status(500).json({ 
+            success: false,
+            error: err 
+        });
+    }
+
+    Achievement.find(searchParams)
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                success: true,
+                achievements: result
+            });
+        })
+        .catch(err => {
+            res.status(500).json({ 
+                success: false,
+                error: err 
+            });
+        });
+};
 
 exports.findAll = function(req, res){
     Achievement.find()

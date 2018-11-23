@@ -59,3 +59,44 @@ PATCH /rewards/exampleid123
 	{"propName": "descriptionShort", "value": "new descriptionShort"}
 ]
 ```
+
+### Search functionality
+A search can be performed with a GET request:
+```
+GET /rewards/search
+```
+The parameters of the search are given through the request body. A basic search on string would look like this:
+*Note that the 'adv' property is not nessecary. Not including this would mean the search would like for equal values.*
+```
+[
+    {
+        "propName": "name",
+        "value": "u",
+        "adv": "like"
+    }
+]
+```
+As you can see, this endpoint accpets an array of objects. Each object is a seperate applies another filter. An example of this is the following:
+```
+[
+    {
+        "propName": "name",
+        "value": "u",
+        "adv": "like"
+    },
+    {
+        "propName": "totalPoints",
+        "value": "100",
+        "adv": "gt"
+    }
+]
+```
+Here we are looking for a user where the name contains 's' and has an amount of totalpoints greater than 100.
+The following is a list of operators tha can be used in the 'adv' property.
+* gt - greater than
+* lt - lesser than
+* gte - greater than or equal to
+* lte - lesser than or equal to
+* like
+
+### Authentication

@@ -30,14 +30,17 @@ exports.buildParams = function(reqBody) {
     return searchParams;
 };
 
-exports.populateTables = function(promise) {
+exports.populateTables = function(req, promise) {
     var populateTables;
+    
     if(req.query.populate){
+        console.log(promise);
         populateTables = req.query.populate.split(',');
         for(const table of populateTables){
             promise.populate(table);
         }
     }
+    return promise;
 }
 
 var exports = module.exports;

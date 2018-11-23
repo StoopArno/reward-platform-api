@@ -12,9 +12,9 @@ exports.filter = function(req, res){
             error: err 
         });
     }
-
-    ChallengeRequest.find(searchParams)
-        .exec()
+    const promise = ChallengeRequest.find(searchParams);
+    searchHelper.populateTables(req, promise);
+    promise.exec()
         .then(result => {
             res.status(200).json({
                 success: true,
@@ -31,14 +31,7 @@ exports.filter = function(req, res){
 
 exports.findAll = function(req, res){
     const promise = ChallengeRequest.find();
-    // searchHelper.populateTables(promise);   
-    var populateTables;
-    if(req.query.populate){
-        populateTables = req.query.populate.split(',');
-        for(const table of populateTables){
-            promise.populate(table);
-        }
-    } 
+    searchHelper.populateTables(req, promise);
 
     promise.exec()
         .then(result => {

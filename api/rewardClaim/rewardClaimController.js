@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
-const RewardClaim = require('./rewardClaimModel')
 const searchHelper = require('../../helper/searchHelper');
+const dataService = require('./rewardClaimDataService');
 
 exports.filter = function(req, res){
     var searchParams;
@@ -9,128 +8,150 @@ exports.filter = function(req, res){
     } catch {
         res.status(500).json({ 
             success: false,
-            error: err 
+            error: err || "Unknown server error"
         });
     }
 
-    const promise = RewardClaim.find(searchParams);
-    searchHelper.populateTables(req, promise);
-    promise.exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                rewardClaims: result
+    var populate;
+    if(req.query.populate){
+        populate = req.query.populate;
+    } else{
+        populate = false;
+    }
+
+    dataService.filter(searchParams, populate)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    rewardClaims: result.rewardClaims
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error || "Unknown server error"
             });
         })
-        .catch(err => {
-            res.status(500).json({ 
-                success: false,
-                error: err 
-            });
-        });
 };
 
 exports.findAll = function(req, res){
-    const promise = RewardClaim.find();
-    searchHelper.populateTables(req, promise);
-    promise.exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                rewardClaims: result
+    var populate;
+    if(req.query.populate){
+        populate = req.query.populate;
+    } else{
+        populate = false;
+    }
+    dataService.findAll(populate)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    rewardClaims: result.rewardClaims
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error ||"Unknown server error"
             });
         })
-        .catch(err => {
-            res.status(500).json({ 
-                success: false,
-                error: err 
-            });
-        });
 };
 
 exports.insert = function(req, res){
-    const rewardClaim = new RewardClaim({
-        _id: new mongoose.Types.ObjectId(),
+    const rewardClaim = {
         date: req.body.date,
         received: req.body.received,
-        user: req.body.user_id,
-        reward: req.body.reward_id
-    });    
-    rewardClaim.save()
-        .then(result => {
-            res.status(201).send({
-                success: true,
-                rewardClaim: result
+        user_id: req.body.user_id,
+        reward_id: req.body.reward_id
+    };    
+
+    dataService.insert(rewardClaim)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    rewardClaim: result.rewardClaim
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error ||"Unknown server error"
             });
         })
-        .catch(err => {
-            res.status(500).json({ 
-                success: false,
-                error: err 
-            });
-        });
 };
 
 exports.find = function(req, res){
-    const promise = RewardClaim.findById(req.params.rewardClaimId);
-    searchHelper.populateTables(req, promise);
-    promise.exec()
-        .then(result => {
-            if(result){
-                res.status(201).send({
+    var populate;
+    if(req.query.populate){
+        populate = req.query.populate;
+    } else{
+        populate = false;
+    }
+    dataService.find(req.params.rewardClaimId, populate)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
                     success: true,
-                    rewardClaim: result
+                    rewardClaim: result.rewardClaim
                 });
             } else{
-                res.status(404).send({
-                    success: false,
-                    error: "No results"
-                });
-            }            
-        })
-        .catch(err => {
-            res.status(500).json({ 
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 };
 
 exports.delete = function(req, res){
-    RewardClaim.deleteOne({_id: req.params.rewardClaimId})
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                result: result
-            });
-        })
-        .catch(err => {
-            res.status(500).json({ 
+    dataService.delete(req.params.rewardClaimId)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    result: result.result
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 };
 
 exports.update = function(req, res){
-    const id = req.params.rewardClaimId;
     const updateOps = {};
     for (const ops of req.body){
         updateOps[ops.propName] = ops.value;
     }
-    RewardClaim.update({ _id: id}, { $set: updateOps})
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                result: result
-            });
-        })
-        .catch(err =>{
-            res.status(500).json({ 
+
+    dataService.update(req.params.rewardClaimId, updateOps)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    result: result.result
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 };

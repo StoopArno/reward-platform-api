@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
-const Challenge = require('./challengeModel');
 const searchHelper = require('../../helper/searchHelper');
+const dataService = require('./challengeDataService');
 
 exports.filter = function(req, res){
     var searchParams;
@@ -9,126 +8,130 @@ exports.filter = function(req, res){
     } catch {
         res.status(500).json({ 
             success: false,
-            error: err 
+            error: err || "Unknown server error"
         });
     }
-
-    Challenge.find(searchParams)
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                challenges: result
+    dataService.filter(searchParams)
+        .then(result => {            
+            if(result.success === true){     
+                res.status(result.status).json({
+                    success: true,
+                    challenges: result.challenges
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error || "Unknown server error"
             });
         })
-        .catch(err => {
-            res.status(500).json({ 
-                success: false,
-                error: err 
-            });
-        });
 };
 
 exports.findAll = function(req, res){
-    Challenge.find()
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                challenges: result
+    dataService.findAll()
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    challenges: result.challenges
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error ||"Unknown server error"
             });
         })
-        .catch(err => {
-            res.status(500).json({ 
-                success: false,
-                error: err 
-            });
-        });
 };
 
 exports.insert = function(req, res){
-    console.log(req.headers);
-    const challenge = new Challenge({
-        _id: new mongoose.Types.ObjectId(),
+    const challenge = {
         title: req.body.title,
         points: req.body.points,
         limit: req.body.limit,
         isAvailable: req.body.isAvailable
-    });  
-    challenge.save()
-        .then(result => {
-            res.status(201).send({
-                success: true,
-                challenge: result
-            });
-        })
-        .catch(err => {
-            res.status(500).json({ 
+    };  
+
+    dataService.insert(challenge)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    challenge: result.challenge
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
-        });  
+        })   
 }
 
 exports.find = function(req, res){
-    Challenge.findById(req.params.challengeId)
-        .exec()
-        .then(doc => {
-            if(result){
-                res.status(201).send({
+    dataService.find(req.params.challengeId)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
                     success: true,
-                    challenge: result
+                    challenge: result.challenge
                 });
             } else{
-                res.status(404).send({
-                    success: false,
-                    error: "No results"
-                });
-            }            
-        })
-        .catch(err => {
-            res.status(500).json({ 
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 }
 
 exports.delete = function(req, res){
-    Challenge.deleteOne({_id: req.params.challengeId})
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                result: result
-            });
-        })
-        .catch(err => {
-            res.status(500).json({ 
+    dataService.delete(req.params.challengeId)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    result: result.result
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 }
 
 exports.update = function(req, res){
-    const id = req.params.challengeId;
     const updateOps = {};
     for (const ops of req.body){
         updateOps[ops.propName] = ops.value;
     }
-    Challenge.update({ _id: id}, { $set: updateOps})
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                result: result
-            });
-        })
-        .catch(err =>{
-            res.status(500).json({ 
+
+    dataService.update(req.params.challengeId, updateOps)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    result: result.result
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 };

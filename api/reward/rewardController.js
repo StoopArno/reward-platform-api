@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
-const Reward = require('./rewardModel');
 const searchHelper = require('../../helper/searchHelper');
+const dataService = require('./rewardDataService');
 
 exports.filter = function(req, res){
     var searchParams;
@@ -9,125 +8,130 @@ exports.filter = function(req, res){
     } catch {
         res.status(500).json({ 
             success: false,
-            error: err 
+            error: err || "Unknown server error"
         });
     }
-    
-    Reward.find(searchParams)
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                rewards: result
+    dataService.filter(searchParams)
+        .then(result => {            
+            if(result.success === true){     
+                res.status(result.status).json({
+                    success: true,
+                    rewards: result.rewards
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error || "Unknown server error"
             });
         })
-        .catch(err => {
-            res.status(500).json({ 
-                success: false,
-                error: err 
-            });
-        });
 };
 
 exports.findAll = function(req, res){
-    Reward.find()
-    .exec()
-    .then(result => {
-        res.status(200).json({
-            success: true,
-            rewards: result
-        });
-    })
-    .catch(err => {
-        res.status(500).json({ 
-            success: false,
-            error: err 
-        });
-    });
+    dataService.findAll()
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    rewards: result.rewards
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error ||"Unknown server error"
+            });
+        })
 };
 
 exports.insert = function(req, res){
-    const reward = new Reward({
-        _id: new mongoose.Types.ObjectId(),
+    const reward = {
         title: req.body.title,
         points: req.body.points,
         limit: req.body.limit,
         isAvailable: req.body.isAvailable
-    });    
-    reward.save()
-        .then(result => {
-            res.status(201).send({
-                success: true,
-                reward: result
-            });
-        })
-        .catch(err => {
-            res.status(500).json({ 
+    };   
+
+    dataService.insert(reward)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    reward: result.reward
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
-        });   
+        }) 
 };
 
 exports.find = function(req, res){
-    Reward.findById(req.params.rewardId)
-        .exec()
-        .then(result => {
-            if(result){
-                res.status(201).send({
+    dataService.find(req.params.rewardId)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
                     success: true,
-                    reward: result
+                    reward: result.reward
                 });
             } else{
-                res.status(404).send({
-                    success: false,
-                    error: "No results"
-                });
-            }            
-        })
-        .catch(err => {
-            res.status(500).json({ 
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 };
 
 exports.delete = function(req, res){
-    Reward.deleteOne({_id: req.params.rewardId})
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                result: result
-            });
-        })
-        .catch(err => {
-            res.status(500).json({ 
+    dataService.delete(req.params.rewardId)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    result: result.result
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 };
 
 exports.update = function(req, res){
-    const id = req.params.rewardId;
     const updateOps = {};
     for (const ops of req.body){
         updateOps[ops.propName] = ops.value;
     }
-    Reward.update({ _id: id}, { $set: updateOps})
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                result: result
-            });
-        })
-        .catch(err =>{
-            res.status(500).json({ 
+
+    dataService.update(req.params.rewardId, updateOps)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    result: result.result
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 };

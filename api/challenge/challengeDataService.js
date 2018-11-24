@@ -1,59 +1,14 @@
 const mongoose = require('mongoose');
-const User = require('./userModel');
-const jwt = require('jsonwebtoken');
-
-exports.authenticate = function(name, password){
-    return new Promise((resolve, reject) => {
-        User.findOne({name: name}, function(err, user){
-            if(err){
-                reject({ 
-                    success: false,
-                    status: 500,
-                    error: err 
-                });
-            } else{                
-                if(user){                    
-                    if(password === user.password){                        
-                        const token = jwt.sign({
-                            _id:user._id,
-                            name: user['name'],
-                            currentPoints: user['currentPoints'],
-                            totalPoints: user['totalPoints'],
-                            isAdmin:user['isAdmin']
-                        }, process.env.JWT_KEY);
-                        
-                        resolve({
-                            success:true,
-                            status: 200,
-                            token: token
-                        });
-                        
-                    } else{
-                        reject({
-                            success:false,
-                            status: 401,
-                            error: "Invalid credentials"
-                        });
-                    }
-                }
-                reject({
-                    success:false,
-                    status: 401,
-                    error: "Invalid credentials"
-                });
-            }
-        });
-    });    
-};
+const Challenge = require('./challengeModel');
 
 exports.filter = function(searchParams){
     return new Promise((resolve, reject) => {
-        User.find(searchParams).exec()
+        Challenge.find(searchParams).exec()
             .then(result => {
                 resolve({
                     success: true,
                     status: 200,
-                    users: result
+                    challenges: result
                 });
             })
             .catch(err => {
@@ -68,12 +23,12 @@ exports.filter = function(searchParams){
 
 exports.findAll = function(){
     return new Promise((resolve, reject) => {
-        User.find().exec()
+        Challenge.find().exec()
             .then(result => {
                 resolve({
                     success: true,
                     status: 200,
-                    users: result
+                    challenges: result
                 });
             })
             .catch(err => {
@@ -86,23 +41,22 @@ exports.findAll = function(){
     })
 };
 
-exports.insert = function(userObj){
+exports.insert = function(challengeObj){
     return new Promise((resolve, reject) => {
-        const user = new User({
+        const challenge = new Challenge({
             _id: new mongoose.Types.ObjectId(),
-            name: userObj.name,
-            password: userObj.password,
-            isAdmin: userObj.isAdmin,
-            currentPoints: userObj.currentPoints,
-            totalPoints: userObj.totalPoints
+            title: challengeObj.title,
+            points: challengeObj.points,
+            limit: challengeObj.limit,
+            isAvailable: challengeObj.isAvailable
         }); 
 
-        user.save()
+        challenge.save()
             .then(result => {
                 resolve({
                     success: true,
                     status: 201,
-                    user: result
+                    challenge: result
                 });
             })
             .catch(err => {
@@ -115,16 +69,16 @@ exports.insert = function(userObj){
     })
 };
 
-exports.find = function(user_id){
+exports.find = function(challenge_id){
     return new Promise((resolve, reject) => {
-        User.findById(user_id)
+        Challenge.findById(challenge_id)
             .exec()
             .then(result => {
                 if(result){
                     resolve({
                         success: true,
                         status: 200,
-                        user: result
+                        challenge: result
                     });
                 } else{
                     reject({
@@ -144,9 +98,9 @@ exports.find = function(user_id){
     })
 };
 
-exports.delete = function(user_id){
+exports.delete = function(challenge_id){
     return new Promise((resolve, reject) => {
-        User.deleteOne({_id: user_id})
+        Challenge.deleteOne({_id: challenge_id})
             .exec()
             .then(result => {
                 resolve({
@@ -165,9 +119,9 @@ exports.delete = function(user_id){
     })
 };
 
-exports.update = function(user_id, updateOps){
+exports.update = function(challenge_id, updateOps){
     return new Promise((resolve, reject) => {
-        User.update({ _id: user_id}, { $set: updateOps})
+        Challenge.update({ _id: challenge_id}, { $set: updateOps})
             .exec()
             .then(result => {
                 resolve({

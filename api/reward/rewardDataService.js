@@ -1,59 +1,14 @@
 const mongoose = require('mongoose');
-const User = require('./userModel');
-const jwt = require('jsonwebtoken');
-
-exports.authenticate = function(name, password){
-    return new Promise((resolve, reject) => {
-        User.findOne({name: name}, function(err, user){
-            if(err){
-                reject({ 
-                    success: false,
-                    status: 500,
-                    error: err 
-                });
-            } else{                
-                if(user){                    
-                    if(password === user.password){                        
-                        const token = jwt.sign({
-                            _id:user._id,
-                            name: user['name'],
-                            currentPoints: user['currentPoints'],
-                            totalPoints: user['totalPoints'],
-                            isAdmin:user['isAdmin']
-                        }, process.env.JWT_KEY);
-                        
-                        resolve({
-                            success:true,
-                            status: 200,
-                            token: token
-                        });
-                        
-                    } else{
-                        reject({
-                            success:false,
-                            status: 401,
-                            error: "Invalid credentials"
-                        });
-                    }
-                }
-                reject({
-                    success:false,
-                    status: 401,
-                    error: "Invalid credentials"
-                });
-            }
-        });
-    });    
-};
+const Reward = require('./rewardModel');
 
 exports.filter = function(searchParams){
     return new Promise((resolve, reject) => {
-        User.find(searchParams).exec()
+        Reward.find(searchParams).exec()
             .then(result => {
                 resolve({
                     success: true,
                     status: 200,
-                    users: result
+                    rewards: result
                 });
             })
             .catch(err => {
@@ -68,12 +23,12 @@ exports.filter = function(searchParams){
 
 exports.findAll = function(){
     return new Promise((resolve, reject) => {
-        User.find().exec()
+        Reward.find().exec()
             .then(result => {
                 resolve({
                     success: true,
                     status: 200,
-                    users: result
+                    rewards: result
                 });
             })
             .catch(err => {
@@ -86,23 +41,22 @@ exports.findAll = function(){
     })
 };
 
-exports.insert = function(userObj){
+exports.insert = function(rewardObj){
     return new Promise((resolve, reject) => {
-        const user = new User({
+        const reward = new Reward({
             _id: new mongoose.Types.ObjectId(),
-            name: userObj.name,
-            password: userObj.password,
-            isAdmin: userObj.isAdmin,
-            currentPoints: userObj.currentPoints,
-            totalPoints: userObj.totalPoints
+            title: rewardObj.title,
+            points: rewardObj.points,
+            limit: rewardObj.limit,
+            isAvailable: rewardObj.isAvailable
         }); 
 
-        user.save()
+        reward.save()
             .then(result => {
                 resolve({
                     success: true,
                     status: 201,
-                    user: result
+                    reward: result
                 });
             })
             .catch(err => {
@@ -115,16 +69,16 @@ exports.insert = function(userObj){
     })
 };
 
-exports.find = function(user_id){
+exports.find = function(reward_id){
     return new Promise((resolve, reject) => {
-        User.findById(user_id)
+        Reward.findById(reward_id)
             .exec()
             .then(result => {
                 if(result){
                     resolve({
                         success: true,
                         status: 200,
-                        user: result
+                        reward: result
                     });
                 } else{
                     reject({
@@ -144,9 +98,9 @@ exports.find = function(user_id){
     })
 };
 
-exports.delete = function(user_id){
+exports.delete = function(reward_id){
     return new Promise((resolve, reject) => {
-        User.deleteOne({_id: user_id})
+        Reward.deleteOne({_id: reward_id})
             .exec()
             .then(result => {
                 resolve({
@@ -165,9 +119,9 @@ exports.delete = function(user_id){
     })
 };
 
-exports.update = function(user_id, updateOps){
+exports.update = function(reward_id, updateOps){
     return new Promise((resolve, reject) => {
-        User.update({ _id: user_id}, { $set: updateOps})
+        Reward.update({ _id: reward_id}, { $set: updateOps})
             .exec()
             .then(result => {
                 resolve({

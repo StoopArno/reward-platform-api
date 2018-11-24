@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
-const ChallengeRequest = require('./challengeRequestModel');
 const searchHelper = require('../../helper/searchHelper');
+const dataService = require('./challengeRequestDataService');
 
 exports.filter = function(req, res){
     var searchParams;
@@ -12,125 +11,148 @@ exports.filter = function(req, res){
             error: err 
         });
     }
-    const promise = ChallengeRequest.find(searchParams);
-    searchHelper.populateTables(req, promise);
-    promise.exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                challengeRequests: result
+
+    var populate;
+    if(req.query.populate){
+        populate = req.query.populate;
+    } else{
+        populate = false;
+    }
+
+    dataService.filter(searchParams, populate)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    challengeRequests: result.challengeRequests
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error || "Unknown server error"
             });
         })
-        .catch(err => {
-            res.status(500).json({ 
-                success: false,
-                error: err 
-            });
-        });
 };
 
 exports.findAll = function(req, res){
-    const promise = ChallengeRequest.find();
-    searchHelper.populateTables(req, promise);
-
-    promise.exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                challengeRequests: result
+    var populate;
+    if(req.query.populate){
+        populate = req.query.populate;
+    } else{
+        populate = false;
+    }
+    dataService.findAll(populate)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    challengeRequests: result.challengeRequests
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error ||"Unknown server error"
             });
         })
-        .catch(err => {
-            res.status(500).json({ 
-                success: false,
-                error: err 
-            });
-        });
 };
 
 exports.insert = function(req, res){
-    const challengeRequest = new ChallengeRequest({
-        _id: new mongoose.Types.ObjectId(),
+    const challengeRequest = {
         date: req.body.date,
         isAccepted: req.body.isAccepted,
         motivation: req.body.motivation,
-        user: req.body.user_id,
-        challenge: req.body.challenge_id,
-    });  
-    challengeRequest.save()
-        .then(result => {
-            res.status(201).send({
-                success: true,
-                challengeRequest: result
+        user_id: req.body.user_id,
+        challenge_id: req.body.challenge_id,
+    };  
+
+    dataService.insert(challengeRequest)
+        .then(result => {           
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    challengeRequest: result.challengeRequest
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error ||"Unknown server error"
             });
         })
-        .catch(err => {
-            res.status(500).json({ 
-                success: false,
-                error: err 
-            });
-        });  
 }
 
 exports.find = function(req, res){
-    ChallengeRequest.findById(req.params.challengeRequestId)
-        .exec()
-        .then(result => {
-            if(result){
-                res.status(201).send({
+    var populate;
+    if(req.query.populate){
+        populate = req.query.populate;
+    } else{
+        populate = false;
+    }
+    dataService.find(req.params.challengeRequestId, populate)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
                     success: true,
-                    challenge: result
+                    challengeRequest: result.challengeRequest
                 });
             } else{
-                res.status(404).send({
-                    success: false,
-                    error: "No results"
-                });
-            }             
-        })
-        .catch(err => {
-            res.status(500).json({ 
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 }
 
 exports.delete = function(req, res){
-    ChallengeRequest.deleteOne({_id: req.params.challengeRequestId})
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                result: result
-            });
-        })
-        .catch(err => {
-            res.status(500).json({ 
+    dataService.delete(req.params.challengeRequestId)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    result: result.result
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 }
 
 exports.update = function(req, res){
-    const id = req.params.challengeRequestId;
     const updateOps = {};
     for (const ops of req.body){
         updateOps[ops.propName] = ops.value;
     }
-    ChallengeRequest.update({ _id: id}, { $set: updateOps })
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                result: result
-            });
-        })
-        .catch(err =>{
-            res.status(500).json({ 
+
+    dataService.update(req.params.challengeRequestId, updateOps)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    result: result.result
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 };

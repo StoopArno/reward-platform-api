@@ -1,59 +1,17 @@
 const mongoose = require('mongoose');
-const User = require('./userModel');
-const jwt = require('jsonwebtoken');
+const ChallengeRequest = require('./challengeRequestModel');
+const searchHelper = require('../../helper/searchHelper');
 
-exports.authenticate = function(name, password){
+exports.filter = function(searchParams, populate){
     return new Promise((resolve, reject) => {
-        User.findOne({name: name}, function(err, user){
-            if(err){
-                reject({ 
-                    success: false,
-                    status: 500,
-                    error: err 
-                });
-            } else{                
-                if(user){                    
-                    if(password === user.password){                        
-                        const token = jwt.sign({
-                            _id:user._id,
-                            name: user['name'],
-                            currentPoints: user['currentPoints'],
-                            totalPoints: user['totalPoints'],
-                            isAdmin:user['isAdmin']
-                        }, process.env.JWT_KEY);
-                        
-                        resolve({
-                            success:true,
-                            status: 200,
-                            token: token
-                        });
-                        
-                    } else{
-                        reject({
-                            success:false,
-                            status: 401,
-                            error: "Invalid credentials"
-                        });
-                    }
-                }
-                reject({
-                    success:false,
-                    status: 401,
-                    error: "Invalid credentials"
-                });
-            }
-        });
-    });    
-};
-
-exports.filter = function(searchParams){
-    return new Promise((resolve, reject) => {
-        User.find(searchParams).exec()
+        const promise = ChallengeRequest.find(searchParams);
+        searchHelper.populateTables2(populate, promise);
+        promise.exec()
             .then(result => {
                 resolve({
                     success: true,
                     status: 200,
-                    users: result
+                    challengeRequests: result
                 });
             })
             .catch(err => {
@@ -66,14 +24,17 @@ exports.filter = function(searchParams){
     });
 };
 
-exports.findAll = function(){
-    return new Promise((resolve, reject) => {
-        User.find().exec()
+exports.findAll = function(populate){
+    return new Promise((resolve, reject) => {        
+        const promise = ChallengeRequest.find();
+
+        searchHelper.populateTables2(populate, promise);
+        promise.exec()
             .then(result => {
                 resolve({
                     success: true,
                     status: 200,
-                    users: result
+                    challengeRequests: result
                 });
             })
             .catch(err => {
@@ -86,23 +47,23 @@ exports.findAll = function(){
     })
 };
 
-exports.insert = function(userObj){
+exports.insert = function(challengeRequestObj){
     return new Promise((resolve, reject) => {
-        const user = new User({
+        const challengeRequest = new ChallengeRequest({
             _id: new mongoose.Types.ObjectId(),
-            name: userObj.name,
-            password: userObj.password,
-            isAdmin: userObj.isAdmin,
-            currentPoints: userObj.currentPoints,
-            totalPoints: userObj.totalPoints
+            date: challengeRequestObj.date,
+            isAccepted: challengeRequestObj.isAccepted,
+            motivation: challengeRequestObj.motivation,
+            user: challengeRequestObj.user_id,
+            challenge: challengeRequestObj.challenge_id,
         }); 
 
-        user.save()
+        challengeRequest.save()
             .then(result => {
                 resolve({
                     success: true,
                     status: 201,
-                    user: result
+                    challengeRequest: result
                 });
             })
             .catch(err => {
@@ -115,16 +76,18 @@ exports.insert = function(userObj){
     })
 };
 
-exports.find = function(user_id){
+exports.find = function(challengeRequest_id, populate){
     return new Promise((resolve, reject) => {
-        User.findById(user_id)
-            .exec()
-            .then(result => {
-                if(result){
+        
+        const promise = ChallengeRequest.findById(challengeRequest_id);
+        searchHelper.populateTables2(populate, promise);
+        promise.exec()
+            .then(result => {                
+                if(result){                    
                     resolve({
                         success: true,
                         status: 200,
-                        user: result
+                        challengeRequest: result
                     });
                 } else{
                     reject({
@@ -144,9 +107,9 @@ exports.find = function(user_id){
     })
 };
 
-exports.delete = function(user_id){
+exports.delete = function(challengeRequest_id){
     return new Promise((resolve, reject) => {
-        User.deleteOne({_id: user_id})
+        ChallengeRequest.deleteOne({_id: challengeRequest_id})
             .exec()
             .then(result => {
                 resolve({
@@ -165,9 +128,9 @@ exports.delete = function(user_id){
     })
 };
 
-exports.update = function(user_id, updateOps){
+exports.update = function(challengeRequest_id, updateOps){
     return new Promise((resolve, reject) => {
-        User.update({ _id: user_id}, { $set: updateOps})
+        ChallengeRequest.update({ _id: challengeRequest_id}, { $set: updateOps})
             .exec()
             .then(result => {
                 resolve({

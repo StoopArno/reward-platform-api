@@ -1,54 +1,12 @@
 const mongoose = require('mongoose');
-const User = require('./userModel');
-const jwt = require('jsonwebtoken');
+const UserAchievement = require('./userAchievementModel');
+const searchHelper = require('../../helper/searchHelper');
 
-exports.authenticate = function(name, password){
+exports.filter = function(searchParams, populate){
     return new Promise((resolve, reject) => {
-        User.findOne({name: name}, function(err, user){
-            if(err){
-                reject({ 
-                    success: false,
-                    status: 500,
-                    error: err 
-                });
-            } else{                
-                if(user){                    
-                    if(password === user.password){                        
-                        const token = jwt.sign({
-                            _id:user._id,
-                            name: user['name'],
-                            currentPoints: user['currentPoints'],
-                            totalPoints: user['totalPoints'],
-                            isAdmin:user['isAdmin']
-                        }, process.env.JWT_KEY);
-                        
-                        resolve({
-                            success:true,
-                            status: 200,
-                            token: token
-                        });
-                        
-                    } else{
-                        reject({
-                            success:false,
-                            status: 401,
-                            error: "Invalid credentials"
-                        });
-                    }
-                }
-                reject({
-                    success:false,
-                    status: 401,
-                    error: "Invalid credentials"
-                });
-            }
-        });
-    });    
-};
-
-exports.filter = function(searchParams){
-    return new Promise((resolve, reject) => {
-        User.find(searchParams).exec()
+        const promise = UserAchievement.find(searchParams);
+        searchHelper.populateTables(populate, promise);
+        promise.exec()
             .then(result => {
                 resolve({
                     success: true,
@@ -73,7 +31,7 @@ exports.findAll = function(){
                 resolve({
                     success: true,
                     status: 200,
-                    users: result
+                    userAchievements: result
                 });
             })
             .catch(err => {

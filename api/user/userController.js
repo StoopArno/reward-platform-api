@@ -1,60 +1,23 @@
-const mongoose = require('mongoose');
-const User = require('./userModel');
-const jwt = require('jsonwebtoken');
 const searchHelper = require('../../helper/searchHelper');
 const dataService = require('./userDataService');
 
 exports.authenticate = function(req, res){
-    // dataService.authenticate(req.body.name, req.body.password).then(result => {
-    //     console.log(result.success);
-    //     if(result.success === true){
-        
-    //         res.status(200).json({
-    //             success: true,
-    //             token: result.token
-    //         });
-    //     } else{
-    //         res.status(result.status || 500).json({
-    //             success: false,
-    //             error: result.error || "Unknown error"
-    //         })
-    //     }
-    // })
-    
-    User.findOne({name: req.body.name}, function(err, user){
-        if(err){
-            res.status(500).json({ 
+    dataService.authenticate(req.body.name, req.body.password)
+        .then(result => {
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    token: result.token
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
-        } else{
-            if(user){
-                if(req.body.password === user.password){
-                    const token = jwt.sign({
-                        _id:user._id,
-                        name: user['name'],
-                        currentPoints: user['totalPoints'],
-                        totalPoints: user['totalPoints'],
-                        isAdmin:user['isAdmin']
-                    }, process.env.JWT_KEY);
-
-                    return res.status(200).json({
-                        success:true,
-                        token: token
-                    });
-                } else{
-                    res.status(401).json({
-                        success:false,
-                        error: "Invalid credentials"
-                    });
-                }
-            }
-            res.status(401).json({
-                success:false,
-                error: "Invalid credentials"
-            });
-        }
-    });
+        })
 };
 
 exports.filter = function(req, res){
@@ -64,126 +27,131 @@ exports.filter = function(req, res){
     } catch {
         res.status(500).json({ 
             success: false,
-            error: err 
+            error: err || "Unknown server error"
         });
     }
-
-    User.find(searchParams)
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                users: result
+    dataService.filter(searchParams)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    users: result.users
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error || "Unknown server error"
             });
         })
-        .catch(err => {
-            res.status(500).json({ 
-                success: false,
-                error: err 
-            });
-        });
 };
 
 exports.findAll = function(req, res){
-    User.find()
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                users: result
+    dataService.findAll()
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    users: result.users
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error ||"Unknown server error"
             });
         })
-        .catch(err => {
-            res.status(500).json({ 
-                success: false,
-                error: err 
-            });
-        });
 };
 
 exports.insert = function(req, res){
-    const user = new User({
-        _id: new mongoose.Types.ObjectId(),
+    const user = {
         name: req.body.name,
         password: req.body.password,
         isAdmin: req.body.isAdmin,
         currentPoints: req.body.currentPoints,
         totalPoints: req.body.totalPoints
-    });  
-    user.save()
-        .then(result => {
-            res.status(201).send({
-                success: true,
-                user: result
-            });
-        })
-        .catch(err => {
-            res.status(500).json({ 
-                success: false,
-                error: err 
-            });
-        });  
-}
+    };  
 
-exports.find = function(req, res){
-    User.findById(req.params.userId)
-        .exec()
-        .then(result => {
-            if(doc){
-                res.status(201).send({
+    dataService.insert(user)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
                     success: true,
-                    user: result
+                    user: result.user
                 });
             } else{
-                res.status(404).send({
-                    success: false,
-                    error: "No results"
-                });
-            }            
-        })
-        .catch(err => {
-            res.status(500).json({ 
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
-}
+};
+
+exports.find = function(req, res){
+    dataService.find(req.params.userId)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    user: result.user
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
+                success: false,
+                error: err.error ||"Unknown server error"
+            });
+        })
+};
 
 exports.delete = function(req, res){
-    User.deleteOne({_id: req.params.userId})
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                result: result
-            });
-        })
-        .catch(err => {
-            res.status(500).json({ 
+    dataService.delete(req.params.userId)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    result: result.result
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 }
 
 exports.update = function(req, res){
-    const id = req.params.userId;
     const updateOps = {};
     for (const ops of req.body){
         updateOps[ops.propName] = ops.value;
     }
-    User.update({ _id: id}, { $set: updateOps})
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                success: true,
-                result: result
-            });
-        })
-        .catch(err =>{
-            res.status(500).json({ 
+
+    dataService.update(req.params.userId, updateOps)
+        .then(result => {            
+            if(result.success === true){        
+                res.status(result.status).json({
+                    success: true,
+                    result: result.result
+                });
+            } else{
+                throw err;
+            }        
+        }).catch(err => {
+            res.status(err.status || 500).json({
                 success: false,
-                error: err 
+                error: err.error ||"Unknown server error"
             });
         })
 };

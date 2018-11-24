@@ -34,8 +34,19 @@ exports.populateTables = function(req, promise) {
     var populateTables;
     
     if(req.query.populate){
-        console.log(promise);
         populateTables = req.query.populate.split(',');
+        for(const table of populateTables){
+            promise.populate(table);
+        }
+    }
+    return promise;
+}
+
+
+exports.populateTables2 = function(populate, promise) {
+    var populateTables;
+    if(populate != false){
+        populateTables = populate.split(',');
         for(const table of populateTables){
             promise.populate(table);
         }

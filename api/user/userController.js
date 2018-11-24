@@ -2,8 +2,25 @@ const mongoose = require('mongoose');
 const User = require('./userModel');
 const jwt = require('jsonwebtoken');
 const searchHelper = require('../../helper/searchHelper');
+const dataService = require('./userDataService');
 
 exports.authenticate = function(req, res){
+    // dataService.authenticate(req.body.name, req.body.password).then(result => {
+    //     console.log(result.success);
+    //     if(result.success === true){
+        
+    //         res.status(200).json({
+    //             success: true,
+    //             token: result.token
+    //         });
+    //     } else{
+    //         res.status(result.status || 500).json({
+    //             success: false,
+    //             error: result.error || "Unknown error"
+    //         })
+    //     }
+    // })
+    
     User.findOne({name: req.body.name}, function(err, user){
         if(err){
             res.status(500).json({ 
@@ -16,6 +33,8 @@ exports.authenticate = function(req, res){
                     const token = jwt.sign({
                         _id:user._id,
                         name: user['name'],
+                        currentPoints: user['totalPoints'],
+                        totalPoints: user['totalPoints'],
                         isAdmin:user['isAdmin']
                     }, process.env.JWT_KEY);
 

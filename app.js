@@ -24,12 +24,18 @@ mongoose.connect(process.env.MONGOLAB_URI, { useNewUrlParser: true });
 // Routes
 app.use('/rewards', rewardRoutes);
 app.use('/challenges', challengeRoutes);
-app.use('/achievements', achievementRoutes);
-app.use('/achievementTypes', achievementTypeRoutes);
+// app.use('/achievements', achievementRoutes);
+// app.use('/achievementTypes', achievementTypeRoutes);
 app.use('/challengeRequests', challengeRequestRoutes);
-app.use('/userAchievements', userAchievementRoutes);
+// app.use('/userAchievements', userAchievementRoutes);
 app.use('/rewardClaims', rewardClaimRoutes);
 app.use('/users', userRoutes);
+
+app.use('/', (req, res, next) => {
+    res.status(200).send(
+        'Welcom to  the API for our reward platform.<br>The documentation for this API can be found at the follwoing url: https://github.com/StoopArno/reward-platform-api'
+    )
+})
 
 app.use((req, res, next) => {
     const err = new Error('Not Found');

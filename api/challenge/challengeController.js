@@ -11,7 +11,12 @@ exports.filter = function(req, res){
             error: err || "Unknown server error"
         });
     }
-    dataService.filter(searchParams)
+    var sort = false;
+    if(req.query.sort){
+        sort = req.query.sort;
+    }
+
+    dataService.filter(searchParams, sort)
         .then(result => {            
             if(result.success === true){     
                 res.status(result.status).json({
@@ -30,7 +35,12 @@ exports.filter = function(req, res){
 };
 
 exports.findAll = function(req, res){
-    dataService.findAll()
+    var sort = false;
+    if(req.query.sort){
+        sort = req.query.sort;
+    }
+
+    dataService.findAll(sort)
         .then(result => {            
             if(result.success === true){        
                 res.status(result.status).json({

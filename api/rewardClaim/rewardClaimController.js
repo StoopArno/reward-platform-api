@@ -19,7 +19,12 @@ exports.filter = function(req, res){
         populate = false;
     }
 
-    dataService.filter(searchParams, populate)
+    var sort = false;
+    if(req.query.sort){
+        sort = req.query.sort;
+    }
+
+    dataService.filter(searchParams, populate, sort)
         .then(result => {            
             if(result.success === true){        
                 res.status(result.status).json({
@@ -44,7 +49,13 @@ exports.findAll = function(req, res){
     } else{
         populate = false;
     }
-    dataService.findAll(populate)
+
+    var sort = false;
+    if(req.query.sort){
+        sort = req.query.sort;
+    }
+    
+    dataService.findAll(populate, sort)
         .then(result => {            
             if(result.success === true){        
                 res.status(result.status).json({

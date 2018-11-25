@@ -12,14 +12,16 @@ exports.filter = function(req, res){
         });
     }
 
-    var populate;
+    var populate = false;
     if(req.query.populate){
         populate = req.query.populate;
-    } else{
-        populate = false;
+    }
+    var sort = false;
+    if(req.query.sort){
+        sort = req.query.sort;
     }
 
-    dataService.filter(searchParams, populate)
+    dataService.filter(searchParams, populate, sort)
         .then(result => {            
             if(result.success === true){        
                 res.status(result.status).json({
@@ -38,13 +40,16 @@ exports.filter = function(req, res){
 };
 
 exports.findAll = function(req, res){
-    var populate;
+    var populate = false;
     if(req.query.populate){
         populate = req.query.populate;
-    } else{
-        populate = false;
     }
-    dataService.findAll(populate)
+    var sort = false;
+    if(req.query.sort){
+        sort = req.query.sort;
+    }
+
+    dataService.findAll(populate, sort)
         .then(result => {            
             if(result.success === true){        
                 res.status(result.status).json({

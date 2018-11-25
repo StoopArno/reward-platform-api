@@ -54,4 +54,11 @@ exports.populateTables2 = function(populate, promise) {
     return promise;
 }
 
+exports.sortResult= function(sort, promise){
+    if(sort != false){
+        promise.sort(sort);
+    }
+    return promise;
+}
+
 var exports = module.exports;

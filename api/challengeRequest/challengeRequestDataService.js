@@ -2,10 +2,11 @@ const mongoose = require('mongoose');
 const ChallengeRequest = require('./challengeRequestModel');
 const searchHelper = require('../../helper/searchHelper');
 
-exports.filter = function(searchParams, populate){
+exports.filter = function(searchParams, populate, sort){
     return new Promise((resolve, reject) => {
         const promise = ChallengeRequest.find(searchParams);
         searchHelper.populateTables2(populate, promise);
+        searchHelper.sortResult(sort, promise);
         promise.exec()
             .then(result => {
                 resolve({
@@ -24,11 +25,11 @@ exports.filter = function(searchParams, populate){
     });
 };
 
-exports.findAll = function(populate){
+exports.findAll = function(populate, sort){
     return new Promise((resolve, reject) => {        
         const promise = ChallengeRequest.find();
-
         searchHelper.populateTables2(populate, promise);
+        searchHelper.sortResult(sort, promise);
         promise.exec()
             .then(result => {
                 resolve({

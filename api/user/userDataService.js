@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('./userModel');
 const jwt = require('jsonwebtoken');
+const searchHelper = require('../../helper/searchHelper')
 
 exports.authenticate = function(name, password){
     return new Promise((resolve, reject) => {
@@ -46,9 +47,11 @@ exports.authenticate = function(name, password){
     });    
 };
 
-exports.filter = function(searchParams){
+exports.filter = function(searchParams, sort){
     return new Promise((resolve, reject) => {
-        User.find(searchParams).exec()
+        const promise = User.find(searchParams);
+        searchHelper.sortResult(sort, promise);
+        promise.exec()
             .then(result => {
                 resolve({
                     success: true,
@@ -66,9 +69,11 @@ exports.filter = function(searchParams){
     });
 };
 
-exports.findAll = function(){
+exports.findAll = function(sort){
     return new Promise((resolve, reject) => {
-        User.find().exec()
+        const promise = User.find();
+        searchHelper.sortResult(sort, promise);
+        promise.exec()
             .then(result => {
                 resolve({
                     success: true,

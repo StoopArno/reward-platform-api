@@ -20,13 +20,10 @@ The port of the nodeJS api can be configured using nodemon.json where you can fi
 
 ## API information
 There are a number of resources that can be queried at this time. These resources are:
-* achievements
-* achievementTypes
 * challenges
 * challengeRequests
 * rewards
 * rewardClaims
-* userAchievements
 * users
 
 A basic getAll can be performed by a simple GET request on the base resource:
@@ -103,9 +100,6 @@ The following is a list of operators tha can be used in the 'adv' property.
 Sometimes instead of just the id referencing an entry in another table/collection you might need the whole object being referenced.
 This is done through the population of objects. This is possible on all GET endpoints of the resources that have any references to other tables:
 * rewardClaims
-* userAchievements
-* achievements
-* achievementTypes
 * challengeRequests
 Here you can see an example of a request that 'joins' two other collections:
 ```
@@ -114,4 +108,31 @@ GET /challengeRequests?populate=user,challenge
 It is important that the names of the tables are only sepperated by 1 comma: , . Not a point or any other method of seperating the values.
 *Note this is alse possible in combination with the /search endpoints of the various resources.*
 
+### Sorting on attributes
+There is also a built in functionality to sort on one certain attribute. This can be achieved in a similar way as the joining of tables: through the URL parameters.
+```
+GET /challengeRequests?sort=-date
+```
+You can sort either descending or ascending. The example above does a descending sort, to achieve an ascending sort you only need to remove the '-':
+* -date: Sort on date, descending
+* date: Sort on date, ascending
+
 ### Authentication
+Authentication is done on the endpoint:
+```
+POST /users/auth
+```
+This endpoint expects the username and password as part of the request body:
+```
+{
+	"name":"user2",
+	"password": "test"
+}
+```
+As we didn't spent much time on authentication, the passwords are stored in plaintext and are compared in plaintext.
+**This is not safe to use in a production environment, as the passwords can be easily retrieved**
+If the authentication is succesfull you will receive a signed JWT token as part of the response. This token contains the userobject. If the logged in user wants to do anything but making get requests, the token should always be send with those requests as part of the Authorization header:
+```
+Header Authorization: Bearer token
+```
+*The space and bearer are important*

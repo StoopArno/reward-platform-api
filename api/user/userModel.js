@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     name: String,
-    password: String,
+    password: { type: String, select: false },
     isAdmin: { type: Boolean, default: false},
     currentPoints: { type: Number, default: 0 },
     totalPoints: { type: Number, default: 0 }

@@ -7,10 +7,10 @@ const cors = require('cors');
 
 const rewardRoutes = require('./api/reward/rewardRouter');
 const challengeRoutes = require('./api/challenge/challengeRouter');
-const achievementRoutes = require('./api/achievement/achievementRouter');
-const achievementTypeRoutes = require('./api/achievementType/achievementTypeRouter')
+// const achievementRoutes = require('./api/achievement/achievementRouter');
+// const achievementTypeRoutes = require('./api/achievementType/achievementTypeRouter')
 const challengeRequestRoutes = require ('./api/challengeRequest/challengeRequestRouter')
-const userAchievementRoutes = require ('./api/userAchievement/userAchievementRouter');
+// const userAchievementRoutes = require ('./api/userAchievement/userAchievementRouter');
 const rewardClaimRoutes = require('./api/rewardClaim/rewardClaimRouter');
 const userRoutes = require('./api/user/userRouter');
 

@@ -4,7 +4,7 @@ This nodeJS api is based on the project located at the following [git repo](http
 ## Setup info
 Clone the repo and use the following command in a terminal which start a local nodeJS server:
 ```
-npm start
+nodemon server.js
 ```
 This refers to the script defined in package.json, which runs nodemon on 'server.js'. It's very important to use 'npm start' otherwise the nodemon configuration won't work.
 ## Configuration info
